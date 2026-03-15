@@ -94,3 +94,44 @@ searchBtn.onclick = () => {
       console.error("Chess.com API error:", err);
     });
 };
+
+// Feedback section (in English)
+document.getElementById("sendFeedback").onclick = () => {
+  const text = document.getElementById("feedback").value.trim();
+  const fbmsg = document.getElementById("fbmsg");
+
+  if (!text) {
+    fbmsg.innerText = "Please enter your feedback!";
+    fbmsg.style.color = "#ff6b6b";
+    return;
+  }
+
+  fbmsg.innerText = "Sending...";
+  fbmsg.style.color = "white";
+
+  fetch("https://formspree.io/f/xeerlzzk", {
+    // Replace with your real Formspree endpoint
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      message: text,
+    }),
+  })
+    .then((r) => {
+      if (!r.ok) throw new Error("Server error");
+      return r.json();
+    })
+    .then(() => {
+      fbmsg.innerText = "Thank you! Your feedback has been sent.";
+      fbmsg.style.color = "#4caf50";
+      document.getElementById("feedback").value = "";
+    })
+    .catch((err) => {
+      fbmsg.innerText = "Failed to send: " + err.message;
+      fbmsg.style.color = "#ff6b6b";
+      console.error(err);
+    });
+};
